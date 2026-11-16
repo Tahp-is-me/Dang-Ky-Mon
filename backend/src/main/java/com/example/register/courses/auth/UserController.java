@@ -1,6 +1,7 @@
 package com.example.register.courses.auth;
 
-import com.example.register.courses.auth.UserService;
+import com.example.register.courses.auth.dto.CreateAdminRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,5 +41,17 @@ public class UserController {
     public ResponseEntity<?> updateRole(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String role = body.get("role");
         return ResponseEntity.ok(userService.updateRole(id, role));
+    }
+
+    // 5. Tạo tài khoản Admin mới (POST /api/admin/users/admin)
+    @PostMapping("/admin")
+    public ResponseEntity<?> createAdmin(@Valid @RequestBody CreateAdminRequest request) {
+        User newAdmin = userService.createAdmin(request);
+        return ResponseEntity.ok(Map.of(
+                "message", "Tạo tài khoản Admin thành công!",
+                "id", newAdmin.getId(),
+                "username", newAdmin.getUsername(),
+                "role", newAdmin.getRole()
+        ));
     }
 }

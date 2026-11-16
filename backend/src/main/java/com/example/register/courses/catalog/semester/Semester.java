@@ -40,7 +40,10 @@ public class Semester {
     @Column(name = "is_active", nullable = false)
     private Integer isActive = 1;
 
-    // Thuộc tính tính toán tự động trả về JSON: Cho biết cổng đăng ký hiện có đang mở hay không
+    @Builder.Default
+    @Column(name = "is_public", nullable = false)
+    private Integer isPublic = 1;
+
     @Transient
     public boolean isRegistrationOpen() {
         if (isActive == null || isActive != 1 || registrationStart == null || registrationEnd == null) {

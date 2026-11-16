@@ -24,10 +24,16 @@ public class SemesterController {
         return ResponseEntity.ok(semesterService.createSemester(request));
     }
 
-    // 2. Lấy danh sách tất cả học kỳ
+    // 2. Lấy danh sách tất cả học kỳ (Admin - gồm cả học kỳ đã ẩn)
     @GetMapping
     public ResponseEntity<?> getAllSemesters() {
         return ResponseEntity.ok(semesterService.getAllSemesters());
+    }
+
+    // 2.1. Lấy danh sách học kỳ đang công khai (isPublic = 1)
+    @GetMapping("/public")
+    public ResponseEntity<?> getPublicSemesters() {
+        return ResponseEntity.ok(semesterService.getPublicSemesters());
     }
 
     // 3. Lấy học kỳ hiện hành
@@ -61,10 +67,16 @@ public class SemesterController {
         return ResponseEntity.ok(semesterService.activateSemester(id));
     }
 
-    // 8. Xóa học kỳ
+    // 8. Xóa mềm học kỳ (đổi isPublic = 0)
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSemester(@PathVariable Long id) {
         semesterService.deleteSemester(id);
-        return ResponseEntity.ok(Map.of("message", "Xóa học kỳ thành công!"));
+        return ResponseEntity.ok(Map.of("message", "Đã ẩn học kỳ thành công!"));
+    }
+
+    // 9. Bật / tắt lại trạng thái hiển thị (isPublic: 1 <-> 0)
+    @PatchMapping("/{id}/toggle-status")
+    public ResponseEntity<?> toggleSemesterPublicStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(semesterService.toggleSemesterPublicStatus(id));
     }
 }

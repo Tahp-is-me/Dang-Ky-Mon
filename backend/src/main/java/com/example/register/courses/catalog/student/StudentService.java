@@ -56,6 +56,25 @@ public class StudentService {
         return mapToDTO(savedStudent);
     }
 
+    // Xóa mềm: Đổi isPublic về 0
+    @Transactional
+    public void deleteStudent(Long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên có ID: " + id));
+        student.setIsPublic(0);
+        studentRepository.save(student);
+    }
+
+    // Bật / tắt trạng thái isPublic (1 <-> 0)
+    @Transactional
+    public StudentResponseDTO toggleStudentStatus(Long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên có ID: " + id));
+        int newStatus = (student.getIsPublic() != null && student.getIsPublic() == 1) ? 0 : 1;
+        student.setIsPublic(newStatus);
+        return mapToDTO(studentRepository.save(student));
+    }
+
     private StudentResponseDTO mapToDTO(Student student) {
         User user = student.getUser();
         Major major = student.getMajor();
@@ -68,7 +87,8 @@ public class StudentService {
                 .majorName(major != null ? major.getMajorName() : null)
                 .majorCode(major != null ? major.getMajorCode() : null)
                 .academicStatus(student.getAcademicStatus())
-                .userStatus(user != null ? String.valueOf(user.getStatus()) : null) // <-- Sửa tại dòng này
+                .userStatus(user != null ? String.valueOf(user.getStatus()) : null)
+                .isPublic(student.getIsPublic())
                 .build();
     }
 }

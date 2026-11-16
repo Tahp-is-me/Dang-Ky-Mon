@@ -33,7 +33,7 @@ public class User {
 
     @Builder.Default
     @Column(nullable = false)
-    private String role = "com/example/register/courses/catalog/student";
+    private String role = "student";
 
     @Builder.Default
     @Column(nullable = false)

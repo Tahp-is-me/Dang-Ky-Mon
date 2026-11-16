@@ -15,4 +15,5 @@ public class StudentResponseDTO {
     private String majorCode;
     private String academicStatus;
     private String userStatus;
+    private Integer isPublic;
 }

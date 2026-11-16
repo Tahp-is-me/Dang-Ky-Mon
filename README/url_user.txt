@@ -1,0 +1,20 @@
+Bảng user, student
+
+Public:
+POST  /api/auth/login: Đăng nhập
+POST  /api/auth/refresh-token : refresh_token
+GET  /api/auth/me : lấy username
+GET  /api/student/profile: lấy thông tin cá nhân (trang student hiện all các thông tin như tên,sdt,ngành,... Còn trang admin chỉ cần username và password)
+PUT /api/auth/profile/{id}: cập nhật thông tin
+PUT  /api/auth/change-password/{id}: cập nhật mật khẩu
+
+
+Admin:
+POST  /api/auth/api/admin/students : tạo mới svien (các field nhập: mã sinh viên, fullname, email, sdt, chọn ngành. Server sẽ tự gán username = mã sv, password tự gán mặc định là 123456)
+POST  /api/admin/users/admin: tạo mới tài khoản admin (nhập fỉeld: username, password, họ tên, email, sdt)
+GET  /api/admin/students: Xem all ds svien
+GET  /api/admin/students/{id} : xem chi tiết 1 svien
+PUT /api/admin/students/{id} : cập nhật ngành và trạng thái học tập của svien
+GET  /api/admin/users : Lấy ds các tài khoản
+PATCH  /api/admin/users/{id}/status: Khóa/mở khóa tài khoản
+PATCH  /api/admin/users/{id}/role : thay đổi role

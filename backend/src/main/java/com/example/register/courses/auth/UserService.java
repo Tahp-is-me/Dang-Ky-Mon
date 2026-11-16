@@ -144,4 +144,29 @@ public class UserService {
         user.setRole(role);
         return userRepository.save(user);
     }
+
+    // Tạo tài khoản Admin mới
+    @Transactional
+    public User createAdmin(CreateAdminRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("Lỗi: Username đã tồn tại!");
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Lỗi: Email đã được sử dụng!");
+        }
+        if (userRepository.existsByPhone(request.getPhone())) {
+            throw new RuntimeException("Lỗi: Số điện thoại đã được sử dụng!");
+        }
+
+        User admin = new User();
+        admin.setUsername(request.getUsername());
+        admin.setPassword(passwordEncoder.encode(request.getPassword()));
+        admin.setFullName(request.getFullName());
+        admin.setEmail(request.getEmail());
+        admin.setPhone(request.getPhone());
+        admin.setRole("admin");
+        admin.setStatus("active");
+
+        return userRepository.save(admin);
+    }
 }

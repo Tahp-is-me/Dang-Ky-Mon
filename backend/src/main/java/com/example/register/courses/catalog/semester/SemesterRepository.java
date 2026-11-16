@@ -17,6 +17,8 @@ public interface SemesterRepository extends JpaRepository<Semester, Long> {
 
     List<Semester> findAllByOrderByStartDateDesc();
 
+    List<Semester> findByIsPublicOrderByStartDateDesc(Integer isPublic);
+
     @Modifying
     @Query("UPDATE Semester s SET s.isActive = 0 WHERE s.isActive = 1")
     void deactivateAllSemesters();

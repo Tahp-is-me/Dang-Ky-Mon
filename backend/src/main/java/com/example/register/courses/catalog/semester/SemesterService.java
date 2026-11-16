@@ -66,6 +66,7 @@ public class SemesterService {
                 .registrationStart(request.getRegistrationStart())
                 .registrationEnd(request.getRegistrationEnd())
                 .isActive(activeFlag)
+                .isPublic(1) // Mặc định hiển thị khi tạo mới
                 .build();
 
         return semesterRepository.save(semester);
@@ -74,6 +75,11 @@ public class SemesterService {
     // 2. Lấy danh sách tất cả học kỳ (sắp xếp mới nhất lên đầu)
     public List<Semester> getAllSemesters() {
         return semesterRepository.findAllByOrderByStartDateDesc();
+    }
+
+    // Lấy danh sách học kỳ chưa bị xóa mềm (isPublic = 1) - bạn thêm hàm này vào SemesterRepository nhé
+    public List<Semester> getPublicSemesters() {
+        return semesterRepository.findByIsPublicOrderByStartDateDesc(1);
     }
 
     // 3. Lấy học kỳ hiện hành (isActive = 1)
@@ -88,7 +94,7 @@ public class SemesterService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy học kỳ có ID: " + id));
     }
 
-    // 5. Cập nhật toàn bộ thông tin học kỳ (phòng trường hợp nhập sai ngày/tên)
+    // 5. Cập nhật toàn bộ thông tin học kỳ
     @Transactional
     public Semester updateSemester(Long id, CreateSemesterRequest request) {
         Semester semester = getSemesterById(id);
@@ -106,6 +112,10 @@ public class SemesterService {
         );
 
         if (request.getIsActive() != null && request.getIsActive() == 1 && semester.getIsActive() != 1) {
+            // Không cho phép kích hoạt học kỳ đang bị ẩn (xóa mềm)
+            if (semester.getIsPublic() != null && semester.getIsPublic() == 0) {
+                throw new RuntimeException("Lỗi: Học kỳ này đang bị ẩn, vui lòng khôi phục trước khi kích hoạt!");
+            }
             semesterRepository.deactivateAllSemesters();
             semester.setIsActive(1);
         } else if (request.getIsActive() != null) {
@@ -144,18 +154,34 @@ public class SemesterService {
     @Transactional
     public Semester activateSemester(Long id) {
         Semester semester = getSemesterById(id);
+        if (semester.getIsPublic() != null && semester.getIsPublic() == 0) {
+            throw new RuntimeException("Lỗi: Không thể kích hoạt học kỳ đang bị ẩn (xóa mềm)!");
+        }
         semesterRepository.deactivateAllSemesters();
         semester.setIsActive(1);
         return semesterRepository.save(semester);
     }
 
-    // 8. Xóa học kỳ
+    // 8. Xóa mềm học kỳ (đổi isPublic = 0)
     @Transactional
     public void deleteSemester(Long id) {
         Semester semester = getSemesterById(id);
         if (semester.getIsActive() == 1) {
             throw new RuntimeException("Lỗi: Không thể xóa học kỳ đang được kích hoạt (isActive = 1)!");
         }
-        semesterRepository.delete(semester);
+        semester.setIsPublic(0);
+        semesterRepository.save(semester);
+    }
+
+    // 9. Khôi phục / bật tắt trạng thái hiển thị (isPublic: 1 <-> 0)
+    @Transactional
+    public Semester toggleSemesterPublicStatus(Long id) {
+        Semester semester = getSemesterById(id);
+        if (semester.getIsActive() == 1 && semester.getIsPublic() == 1) {
+            throw new RuntimeException("Lỗi: Không thể ẩn học kỳ đang được kích hoạt!");
+        }
+        int newStatus = (semester.getIsPublic() != null && semester.getIsPublic() == 1) ? 0 : 1;
+        semester.setIsPublic(newStatus);
+        return semesterRepository.save(semester);
     }
 }

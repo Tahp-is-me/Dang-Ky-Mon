@@ -1,0 +1,79 @@
+http://localhost:8080
+
+Bảng lecturers
+
+Public:
+GET  /api/admin/lecturers : Xem all giảng viên
+GET  /api/admin/lecturers/{id} : Xem chi tiết 1 giảng viên
+GET  /api/admin/lecturers/search : Tìm kiếm theo tên/mã/khoa
+GET  /api/admin/lecturers/departments: Lấy ds các khao để dropdown
+
+
+Admin:
+POST  /api/admin/lecturers : Thêm mới
+PUT  /api/admin/lecturers/{id} : Cập nhật
+DELETE  /api/admin/lecturers/{id} : Xóa
+PATCH /api/admin/lecturers/{id}/toggle-status : Khôi phục sau khi xóa
+
+
+
+Bảng courses
+
+Public:
+GET  /api/admin/courses : xem all môn học (với is_public = 1)
+GET  /api/admin/courses/{id} : xem chi tiết 1 môn
+GET  /api/admin/courses/search : Tìm kiếm theo mã môn, tên môn
+
+
+Admin:
+POST  /api/admin/courses : Tạo mới
+PUT  /api/admin/courses/{id} : Cập nhật
+DELETE  /api/admin/courses/{id} : Xóa
+PATCH  /api/admin/courses/{id}/toggle-status : Khôi phục sau khi xóa
+
+
+Bảng major
+Public:
+Xem all hoặc 1 ngành
+
+Admin:
+Thêm/sửa
+Xóa và Khôi phục
+
+
+
+Bảng major_course
+
+Public:
+GET  /api/admin/major-courses/major/{majorId} : Xem chi tiết 1 môn học thuộc 1 ngành học
+GET  /api/admin/major-courses/major : xem all ngành học
+
+Admin:
+Thêm/Sửa
+Xóa cứng ko có khôi phục
+
+
+Bảng semesters
+
+Public:
+GET  /api/admin/semesters : Xem all học kì
+GET  /api/admin/semesters/{id}: Xem chi tiết 1 học kì
+GET  /api/admin/semesters/active : Xem học kì hiện tại
+
+
+Admin:
+POST  /api/admin/semesters : Tạo mới
+PUT  /api/admin/semesters/{id}: Cập nhật
+PATCH  /api/admin/semesters/{id}/registration-window : cập nhật nhanh tgian đăng kí tín chỉ
+PATCH  /api/admin/semesters/{id}/activate : Kích hoạt học kì hiện tại và tự động ngắt các học kì khác
+DELETE /api/admin/semesters/{id}: Xóa học kì
+
+
+Bảng room
+Public:
+Xem phòng học hoặc xem chi tiết
+Xem có lọc tìm kiếm theo mã phòng, tòa nhà
+Lấy ds các tòa nhà để dropdown khi xem
+
+Admin:
+Thêm/xóa/Sửa
