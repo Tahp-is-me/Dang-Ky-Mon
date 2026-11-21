@@ -169,4 +169,28 @@ public class UserService {
 
         return userRepository.save(admin);
     }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+    }
+
+    @Transactional
+    public User updateProfileByUsername(String username, UpdateProfileRequest request) {
+        User user = getUserByUsername(username);
+        if (request.getFullName() != null) user.setFullName(request.getFullName());
+        if (request.getEmail() != null) user.setEmail(request.getEmail());
+        if (request.getPhone() != null) user.setPhone(request.getPhone());
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void changePasswordByUsername(String username, ChangePasswordRequest request) {
+        User user = getUserByUsername(username);
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("Mật khẩu cũ không chính xác");
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
 }

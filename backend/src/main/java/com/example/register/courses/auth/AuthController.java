@@ -27,25 +27,22 @@ public class AuthController {
         return ResponseEntity.ok(userService.refreshToken(request));
     }
 
-    // Xem thông tin cá nhân
+    // Xem thông tin cá nhân của chính người đang đăng nhập
     @GetMapping("/me")
     public ResponseEntity<?> getMyProfile(Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.badRequest().body("Chưa xác thực người dùng (chưa bật JWT Filter)");
-        }
-        return ResponseEntity.ok(principal.getName());
+        return ResponseEntity.ok(userService.getUserByUsername(principal.getName()));
     }
 
-    // Cập nhật thông tin cá nhân
-    @PutMapping("/profile/{id}")
-    public ResponseEntity<?> updateProfile(@PathVariable Long id, @Valid @RequestBody UpdateProfileRequest request) {
-        return ResponseEntity.ok(userService.updateProfile(id, request));
+    // Cập nhật thông tin cá nhân của chính mình (không truyền ID qua URL nữa)
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(Principal principal, @Valid @RequestBody UpdateProfileRequest request) {
+        return ResponseEntity.ok(userService.updateProfileByUsername(principal.getName(), request));
     }
 
-    // Đổi mật khẩu
-    @PutMapping("/change-password/{id}")
-    public ResponseEntity<?> changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordRequest request) {
-        userService.changePassword(id, request);
+    // Đổi mật khẩu của chính mình
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(Principal principal, @Valid @RequestBody ChangePasswordRequest request) {
+        userService.changePasswordByUsername(principal.getName(), request);
         return ResponseEntity.ok("Đổi mật khẩu thành công!");
     }
 }
